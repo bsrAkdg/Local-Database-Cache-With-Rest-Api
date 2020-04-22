@@ -34,15 +34,16 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
         mSearchView = findViewById(R.id.search_view);
 
         mRecipeListViewModel = ViewModelProviders.of(this).get(RecipeListViewModel.class);
-        subsuctibeObservers();
+        subsucribeObservers();
 
         initRecyclerView();
         initSearchView();
 
         setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
+
     }
 
-    private void subsuctibeObservers() {
+    private void subsucribeObservers() {
         mRecipeListViewModel.getViewStateMutableLiveData().observe(this, new Observer<RecipeListViewModel.ViewState>() {
             @Override
             public void onChanged(@Nullable RecipeListViewModel.ViewState viewState) {
