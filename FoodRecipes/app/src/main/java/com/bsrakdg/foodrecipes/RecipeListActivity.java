@@ -1,8 +1,10 @@
 package com.bsrakdg.foodrecipes;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -32,12 +34,32 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
         mSearchView = findViewById(R.id.search_view);
 
         mRecipeListViewModel = ViewModelProviders.of(this).get(RecipeListViewModel.class);
+        subsuctibeObservers();
 
         initRecyclerView();
         initSearchView();
+
         setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
     }
 
+    private void subsuctibeObservers() {
+        mRecipeListViewModel.getViewStateMutableLiveData().observe(this, new Observer<RecipeListViewModel.ViewState>() {
+            @Override
+            public void onChanged(@Nullable RecipeListViewModel.ViewState viewState) {
+                if (viewState != null) {
+                    if (viewState == RecipeListViewModel.ViewState.CATEGORIES) {
+                        displaySearchCategories();
+                    } else if (viewState == RecipeListViewModel.ViewState.RECIPES) {
+                        // recipes will show automatically from another observer
+                    }
+                }
+            }
+        });
+    }
+
+    private void displaySearchCategories() {
+        mAdapter.displaySearchCategories();
+    }
 
     private void initRecyclerView(){
         mAdapter = new RecipeRecyclerAdapter(this);
