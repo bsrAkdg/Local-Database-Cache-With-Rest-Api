@@ -22,6 +22,9 @@ import com.bsrakdg.foodrecipes.models.Recipe;
 import com.bsrakdg.foodrecipes.util.Resource;
 import com.bsrakdg.foodrecipes.util.VerticalSpacingItemDecorator;
 import com.bsrakdg.foodrecipes.viewmodels.RecipeListViewModel;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.List;
 
@@ -116,7 +119,7 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
     }
 
     private void initRecyclerView(){
-        mAdapter = new RecipeRecyclerAdapter(this);
+        mAdapter = new RecipeRecyclerAdapter(this, initGlide());
         VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(30);
         mRecyclerView.addItemDecoration(itemDecorator);
         mRecyclerView.setAdapter(mAdapter);
@@ -150,6 +153,12 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
         searchRecipesApi(category);
     }
 
+    private RequestManager initGlide() {
+        RequestOptions requestOptions = new RequestOptions()
+                .placeholder(R.drawable.white_background)
+                .error(R.drawable.white_background);
+        return  Glide.with(this).setDefaultRequestOptions(requestOptions);
+    }
 }
 
 
