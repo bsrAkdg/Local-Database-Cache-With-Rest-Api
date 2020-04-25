@@ -63,7 +63,7 @@ public class RecipeRepository {
 
             @Override
             protected boolean shouldFetch(@Nullable List<Recipe> data) {
-                return false;
+                return true;
             }
 
             @NonNull

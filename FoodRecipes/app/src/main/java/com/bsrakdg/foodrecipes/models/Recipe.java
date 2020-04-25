@@ -31,6 +31,7 @@ public class Recipe implements Parcelable{
 
     @ColumnInfo(name = "ingredients")
     private String[] ingredients;
+
     @ColumnInfo(name = "timestamp")
     private int timestamp;
 
