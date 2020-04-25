@@ -110,15 +110,27 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
         else if(mRecipes.get(position).getTitle().equals("EXHAUSTED...")){
             return EXHAUSTED_TYPE;
-        }
-        else if(position == mRecipes.size() - 1
-                && position != 0
-                && !mRecipes.get(position).getTitle().equals("EXHAUSTED...")){
-            return LOADING_TYPE;
-        }
-        else{
+        } else{
             return RECIPE_TYPE;
         }
+    }
+
+    // display loading during search request
+    public void displayOnlyLoading() {
+        clearRecipes();
+        Recipe recipe = new Recipe();
+        recipe.setTitle("LOADING...");
+        mRecipes.add(recipe);
+        notifyDataSetChanged();
+    }
+
+    private void clearRecipes() {
+        if (mRecipes == null) {
+            mRecipes = new ArrayList<>();
+        } else {
+            mRecipes.clear();
+        }
+        notifyDataSetChanged();
     }
 
     public void setQueryExhausted(){
@@ -129,24 +141,26 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         notifyDataSetChanged();
     }
 
-    private void hideLoading(){
+    public void hideLoading(){
         if(isLoading()){
-            for(Recipe recipe: mRecipes){
-                if(recipe.getTitle().equals("LOADING...")){
-                    mRecipes.remove(recipe);
-                }
+            if (mRecipes.get(0).getTitle().equals("LOADING...")) {
+                mRecipes.remove(0);
+            } else if (mRecipes.get(mRecipes.size() -1).getTitle().equals("LOADING...")) {
+                mRecipes.remove(mRecipes.size() -1);
             }
             notifyDataSetChanged();
         }
     }
 
+    //pagination
     public void displayLoading(){
+        if (mRecipes == null) {
+            mRecipes = new ArrayList<>();
+        }
         if(!isLoading()){
             Recipe recipe = new Recipe();
             recipe.setTitle("LOADING...");
-            List<Recipe> loadingList = new ArrayList<>();
-            loadingList.add(recipe);
-            mRecipes = loadingList;
+            mRecipes.add(recipe);
             notifyDataSetChanged();
         }
     }
