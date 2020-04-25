@@ -1,6 +1,7 @@
 package com.bsrakdg.foodrecipes.repositories;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,6 +20,8 @@ import com.bsrakdg.foodrecipes.util.Resource;
 import java.util.List;
 
 public class RecipeRepository {
+
+    private static final String TAG = "RecipeRepository";
 
     private static  RecipeRepository instance;
     private RecipeDao recipeDao;
@@ -39,7 +42,23 @@ public class RecipeRepository {
 
             @Override
             protected void saveCallResult(@NonNull RecipeSearchResponse item) {
-
+                if (item.getRecipes() != null) { // will be null
+                    Recipe[] recipes = new Recipe[item.getRecipes().size()];
+                    int index = 0;
+                    for (long rowId : recipeDao.insertRecipe((item.getRecipes().toArray(recipes)))) {
+                        if (rowId == -1) { // there is conflict
+                            Log.d(TAG, "saveCallResult: CONFLICT .. This recipe is already in the cache");
+                            // if the recipe already exists... I don't want to set the ingredients or timestamp
+                            // they will be erased
+                            recipeDao.updateRecipe(recipes[index].getRecipe_id(),
+                                    recipes[index].getTitle(),
+                                    recipes[index].getPublisher(),
+                                    recipes[index].getImage_url(),
+                                    recipes[index].getSocial_rank());
+                        }
+                        index++;
+                    }
+                }
             }
 
             @Override
