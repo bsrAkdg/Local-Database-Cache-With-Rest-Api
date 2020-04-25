@@ -179,6 +179,7 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
         if (mRecipeListViewModel.getViewStateMutableLiveData().getValue() == RecipeListViewModel.ViewState.CATEGORIES) {
             super.onBackPressed();
         } else {
+            mRecipeListViewModel.cancelSearhRequest();
             mRecipeListViewModel.setViewCategories();
         }
     }
