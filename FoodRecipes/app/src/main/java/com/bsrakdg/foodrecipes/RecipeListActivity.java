@@ -173,6 +173,15 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
                 .error(R.drawable.white_background);
         return  Glide.with(this).setDefaultRequestOptions(requestOptions);
     }
+
+    @Override
+    public void onBackPressed() {
+        if (mRecipeListViewModel.getViewStateMutableLiveData().getValue() == RecipeListViewModel.ViewState.CATEGORIES) {
+            super.onBackPressed();
+        } else {
+            mRecipeListViewModel.setViewCategories();
+        }
+    }
 }
 
 

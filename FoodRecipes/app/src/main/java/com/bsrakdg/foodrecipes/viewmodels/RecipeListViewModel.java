@@ -108,6 +108,9 @@ public class RecipeListViewModel extends AndroidViewModel {
         return pageNumber;
     }
 
+    public void setViewCategories() {
+        viewStateMutableLiveData.setValue(ViewState.CATEGORIES);
+    }
     public enum ViewState {CATEGORIES, RECIPES}
 
 }
