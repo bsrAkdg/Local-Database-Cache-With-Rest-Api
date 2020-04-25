@@ -3,11 +3,11 @@ package com.bsrakdg.foodrecipes.viewmodels;
 import android.app.Application;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
 
 import com.bsrakdg.foodrecipes.models.Recipe;
@@ -32,6 +32,7 @@ public class RecipeListViewModel extends AndroidViewModel {
     private String query;
 
     private boolean cancelRequest;
+    private long requestStartTime;
 
     public RecipeListViewModel(@NonNull Application application) {
         super(application);
@@ -73,6 +74,7 @@ public class RecipeListViewModel extends AndroidViewModel {
     }
 
     private void executeSearch() {
+        requestStartTime = System.currentTimeMillis();
         isPerformingQuery = true;
         viewStateMutableLiveData.setValue(ViewState.RECIPES);
         cancelRequest = false;
@@ -86,7 +88,11 @@ public class RecipeListViewModel extends AndroidViewModel {
                         // react to the data
                         recipes.setValue(listResource);
                         if (listResource.status == Resource.Status.SUCCESS) {
+                            Log.d(TAG, "onChanged: REQUEST TIME: "
+                                    + (System.currentTimeMillis() - requestStartTime) / 1000
+                                    + " seconds");
                             isPerformingQuery = false;
+
                             if (listResource.data != null) {
                                 if (listResource.data.size() == 0) {
                                     Log.d(TAG, "onChanged: query is exhausted...");
@@ -99,6 +105,9 @@ public class RecipeListViewModel extends AndroidViewModel {
                             }
                             recipes.removeSource(repositorySource);
                         } else if (listResource.status == Resource.Status.ERROR) {
+                            Log.d(TAG, "onChanged: REQUEST TIME: "
+                                    + (System.currentTimeMillis() - requestStartTime) / 1000
+                                    + " seconds");
                             isPerformingQuery = false;
                             recipes.removeSource(repositorySource);
                         }
@@ -108,7 +117,6 @@ public class RecipeListViewModel extends AndroidViewModel {
                 } else {
                     recipes.removeSource(repositorySource);
                 }
-
             }
         });
     }
