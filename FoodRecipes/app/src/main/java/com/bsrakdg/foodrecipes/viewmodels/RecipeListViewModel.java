@@ -60,6 +60,12 @@ public class RecipeListViewModel extends AndroidViewModel {
         }
     }
 
+    public void searchNextPage() {
+        if (!isQueryExhausted && !isPerformingQuery) {
+            pageNumber++;
+            executeSearch();
+        }
+    }
     public MutableLiveData<ViewState> getViewStateMutableLiveData() {
         return viewStateMutableLiveData;
     }

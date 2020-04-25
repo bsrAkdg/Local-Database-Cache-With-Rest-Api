@@ -2,19 +2,19 @@ package com.bsrakdg.foodrecipes;
 
 import static com.bsrakdg.foodrecipes.viewmodels.RecipeListViewModel.QUERY_EXHAUSTED;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
-
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bsrakdg.foodrecipes.adapters.OnRecipeListener;
 import com.bsrakdg.foodrecipes.adapters.RecipeRecyclerAdapter;
@@ -111,7 +111,9 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
     }
 
     private void searchRecipesApi(String query) {
+        mRecyclerView.smoothScrollToPosition(0);
         mRecipeListViewModel.searchRecipesApi(query, 1);
+        mSearchView.clearFocus();
     }
 
     private void displaySearchCategories() {
@@ -123,6 +125,18 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
         VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(30);
         mRecyclerView.addItemDecoration(itemDecorator);
         mRecyclerView.setAdapter(mAdapter);
+
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (!mRecyclerView.canScrollHorizontally(1)
+                        && mRecipeListViewModel.getViewStateMutableLiveData().getValue()
+                        == RecipeListViewModel.ViewState.RECIPES) {
+                    mRecipeListViewModel.searchNextPage();
+                }
+            }
+        });
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
