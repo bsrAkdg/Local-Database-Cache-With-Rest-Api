@@ -3,6 +3,7 @@ package com.bsrakdg.foodrecipes;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -15,6 +16,8 @@ import androidx.lifecycle.ViewModelProviders;
 import com.bsrakdg.foodrecipes.models.Recipe;
 import com.bsrakdg.foodrecipes.util.Resource;
 import com.bsrakdg.foodrecipes.viewmodels.RecipeViewModel;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 public class RecipeActivity extends BaseActivity {
 
@@ -66,6 +69,7 @@ public class RecipeActivity extends BaseActivity {
                             Log.d(TAG, "onChanged: sstatus : ERROR, Recipe : " + recipeResource.data
                                     .getTitle());
                             Log.d(TAG, "onChanged: ERROR message " + recipeResource.message);
+                            setRecipeProperties(recipeResource.data);
                             showParent();
                             showProgressBar(false);
                             break;
@@ -74,6 +78,7 @@ public class RecipeActivity extends BaseActivity {
                             Log.d(TAG,
                                     "onChanged: status : SUCCESS, Recipe : " + recipeResource.data
                                             .toString());
+                            setRecipeProperties(recipeResource.data);
                             showParent();
                             showProgressBar(false);
                             break;
@@ -84,6 +89,46 @@ public class RecipeActivity extends BaseActivity {
                 }
             }
         });
+    }
+
+    private void setIngredients(Recipe recipe) {
+        mRecipeIngredientsContainer.removeAllViews();
+        if (recipe.getIngredients() != null) {
+            for (String ingredient : recipe.getIngredients()) {
+                TextView textView = new TextView(this);
+                textView.setText(ingredient);
+                textView.setTextSize(15);
+                textView.setLayoutParams(new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT));
+                mRecipeIngredientsContainer.addView(textView);
+            }
+        } else {
+            TextView textView = new TextView(this);
+            textView.setText("Error retrieving ingredients.\nCheck network connection");
+            textView.setTextSize(15);
+            textView.setLayoutParams(new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+            mRecipeIngredientsContainer.addView(textView);
+        }
+    }
+
+    private void setRecipeProperties(Recipe recipe) {
+        if (recipe != null) {
+            RequestOptions requestOptions = new RequestOptions()
+                    .placeholder(R.drawable.white_background)
+                    .error(R.drawable.white_background);
+            Glide.with(this)
+                    .setDefaultRequestOptions(requestOptions)
+                    .load(recipe.getImage_url())
+                    .into(mRecipeImage);
+
+            mRecipeTitle.setText(recipe.getTitle());
+            mRecipeRank.setText(String.valueOf(Math.round(recipe.getSocial_rank())));
+
+            setIngredients(recipe);
+        }
     }
 
     private void showParent(){
