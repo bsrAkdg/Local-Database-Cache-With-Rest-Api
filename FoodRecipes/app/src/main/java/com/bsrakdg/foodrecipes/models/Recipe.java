@@ -108,7 +108,6 @@ public class Recipe implements Parcelable{
         }
     };
 
-
     public String getTitle() {
         return title;
     }
