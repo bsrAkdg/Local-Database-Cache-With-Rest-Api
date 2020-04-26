@@ -101,6 +101,7 @@ public class RecipeListViewModel extends AndroidViewModel {
                                             listResource.data,
                                             QUERY_EXHAUSTED
                                     ));
+                                    isQueryExhausted = true;
                                 }
                             }
                             recipes.removeSource(repositorySource);
@@ -109,8 +110,12 @@ public class RecipeListViewModel extends AndroidViewModel {
                                     + (System.currentTimeMillis() - requestStartTime) / 1000
                                     + " seconds");
                             isPerformingQuery = false;
+                            if (listResource.message.equals(QUERY_EXHAUSTED)) {
+                                isQueryExhausted = true;
+                            }
                             recipes.removeSource(repositorySource);
                         }
+                        recipes.setValue(listResource);
                     } else {
                         recipes.removeSource(repositorySource);
                     }

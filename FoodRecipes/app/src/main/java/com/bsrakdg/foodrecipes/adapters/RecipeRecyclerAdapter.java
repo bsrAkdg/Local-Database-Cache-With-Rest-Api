@@ -136,7 +136,6 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
     }
 
-
     public void setQueryExhausted(){
         hideLoading();
         Recipe exhaustedRecipe = new Recipe();

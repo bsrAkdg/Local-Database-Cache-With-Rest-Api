@@ -1,5 +1,7 @@
 package com.bsrakdg.foodrecipes.requests.responses;
 
+import static com.bsrakdg.foodrecipes.viewmodels.RecipeListViewModel.QUERY_EXHAUSTED;
+
 import java.io.IOException;
 
 import retrofit2.Response;
@@ -16,6 +18,12 @@ public class ApiResponse<T> {
     public ApiResponse<T> create(Response<T> response) {
         if (response.isSuccessful()) {
             T body = response.body();
+            if (body instanceof RecipeSearchResponse) {
+                if(((RecipeSearchResponse) body).getCount() == 0){
+                    // query is exhausted
+                    return new ApiErrorResponse<>(QUERY_EXHAUSTED);
+                }
+            }
             if (body == null || response.code() == 204) { // 204 no content error
                 return new ApiEmptyResponse<>();
             } else {
