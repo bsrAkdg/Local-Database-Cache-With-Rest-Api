@@ -24,7 +24,9 @@ import com.bsrakdg.foodrecipes.util.VerticalSpacingItemDecorator;
 import com.bsrakdg.foodrecipes.viewmodels.RecipeListViewModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.util.ViewPreloadSizeProvider;
 
 import java.util.List;
 
@@ -120,11 +122,17 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
         mAdapter.displaySearchCategories();
     }
 
-    private void initRecyclerView(){
-        mAdapter = new RecipeRecyclerAdapter(this, initGlide());
+    private void initRecyclerView() {
+        ViewPreloadSizeProvider<String> viewPreloader = new ViewPreloadSizeProvider<>();
+
+        mAdapter = new RecipeRecyclerAdapter(this, initGlide(), viewPreloader);
+
         VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(30);
         mRecyclerView.addItemDecoration(itemDecorator);
-        mRecyclerView.setAdapter(mAdapter);
+
+        RecyclerViewPreloader<String> preloader = new RecyclerViewPreloader<>(
+                Glide.with(this), mAdapter, viewPreloader, 30);
+        mRecyclerView.addOnScrollListener(preloader);
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -138,6 +146,7 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
             }
         });
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     private void initSearchView(){

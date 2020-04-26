@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bsrakdg.foodrecipes.R;
 import com.bsrakdg.foodrecipes.models.Recipe;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.util.ViewPreloadSizeProvider;
 
 public class RecipeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -17,13 +18,17 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder implements View.On
     private AppCompatImageView image;
     private OnRecipeListener onRecipeListener;
     private RequestManager requestManager;
+    private ViewPreloadSizeProvider viewPreloadSizeProvider;
 
-    public RecipeViewHolder(@NonNull View itemView, OnRecipeListener onRecipeListener,
-                            RequestManager requestManager) {
+    public RecipeViewHolder(@NonNull View itemView,
+                            OnRecipeListener onRecipeListener,
+                            RequestManager requestManager,
+                            ViewPreloadSizeProvider viewPreloadSizeProvider) {
         super(itemView);
 
         this.onRecipeListener = onRecipeListener;
         this.requestManager = requestManager;
+        this.viewPreloadSizeProvider = viewPreloadSizeProvider;
 
         title = itemView.findViewById(R.id.recipe_title);
         publisher = itemView.findViewById(R.id.recipe_publisher);
@@ -44,6 +49,8 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder implements View.On
         title.setText(recipe.getTitle());
         publisher.setText(recipe.getPublisher());
         socialScore.setText(String.valueOf(Math.round(recipe.getSocial_rank())));
+
+        viewPreloadSizeProvider.setView(image);
     }
 }
 
